@@ -330,15 +330,20 @@ size_t HashTable<K,V,Prober,Hash,KEqual>::size() const
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 {
-    if ((numItems_ + numDeleted_) / size_ >= resizeAlpha_) {
+    // resize if loading factor is greater than alpha
+    if ((numItems_ + numDeleted_) / static_cast<double>(size_) >= resizeAlpha_) {
         this->resize();
     }
     HASH_INDEX_T loc = this->probe(p.first);
     if(loc == npos) {
         throw std::logic_error("No location available to insert item");
     }
-    table_[loc] = new HashItem(p);
-    numItems_++;
+    if (kequal_(p.first, table_[loc]->item.first)) {
+        table_[loc]->item.second = p.second;
+    } else {
+        table_[loc] = new HashItem(p);
+        numItems_++;
+    }
 }
 
 // To be completed
