@@ -433,22 +433,23 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
     mIndex_++;
     size_t newSize = CAPACITIES[mIndex_];
     std::vector<HashItem*> oldTable = table_;
+    size_t oldSize = size_;
     std::vector<HashItem*> newTable(newSize, nullptr);
-    table_ = newTable;
     
-    for(HASH_INDEX_T i = 0; i < size_; i++) {
+    table_ = newTable;
+    size_ = newSize;
+    numItems_ = 0;
+    numDeleted_ = 0;
+    
+    for(HASH_INDEX_T i = 0; i < oldSize; i++) {
         if(oldTable[i] != nullptr) {
             if (oldTable[i]->deleted) {
                 delete oldTable[i];
             } else {
-                HASH_INDEX_T loc = this->probe(oldTable[i]->item.first);
-                table_[loc] = oldTable[i];
+                this->insert(oldTable[i]->item);
             }
         }
     }
-
-    numDeleted_ = 0;
-    size_ = newSize;
 }
 
 // Almost complete
