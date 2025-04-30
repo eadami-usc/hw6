@@ -443,11 +443,10 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
     
     for(HASH_INDEX_T i = 0; i < oldSize; i++) {
         if(oldTable[i] != nullptr) {
-            if (oldTable[i]->deleted) {
-                delete oldTable[i];
-            } else {
+            if (!oldTable[i]->deleted) {
                 this->insert(oldTable[i]->item);
             }
+            delete oldTable[i];
         }
     }
 }
