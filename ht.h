@@ -463,12 +463,12 @@ HASH_INDEX_T HashTable<K,V,Prober,Hash,KEqual>::probe(const KeyType& key) const
     totalProbes_++;
     while(Prober::npos != loc)
     {
-        if(nullptr == table_[loc] ) {
+        if(nullptr == table_[loc]) {
             return loc;
         }
         // fill in the condition for this else if statement which should 
         // return 'loc' if the given key exists at this location
-        else if(kequal_(key, table_[loc]->item.first)) {
+        else if(!table_[loc]->deleted && kequal_(key, table_[loc]->item.first)) {
             return loc;
         }
         loc = prober_.next();
