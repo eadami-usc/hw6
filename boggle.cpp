@@ -72,7 +72,7 @@ std::pair<std::set<std::string>, std::set<std::string> > parseDict(std::string f
 		}
 	}
 	prefix.insert("");
-	return make_pair(dict, prefix);
+	return std::make_pair(dict, prefix);
 }
 
 std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board)
@@ -94,6 +94,34 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
-//add your solution here!
+	// bounds check
+	if (r >= board.size() || c >= board.size()) {
+		return false;
+	}
 
+	word += board[r][c];
+	
+	// base case
+	if (prefix.find(word) == prefix.end()) {
+		// if word is not a prefix but is a valid word, it is the longest word
+		if (dict.find(word) != dict.end()) {
+			result.insert(word);
+			return true;
+		}
+		// stop searching if word is not a prefix
+		return false;
+	}
+	
+	// recurse for a longer word
+	if (boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc)) {
+		return true;
+	}
+	
+	// if word is valid, add to result
+	if (dict.find(word) != dict.end()) {
+		result.insert(word);
+		return true;
+	}
+	
+	return false;
 }
