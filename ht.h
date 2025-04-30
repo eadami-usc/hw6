@@ -338,11 +338,11 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
     if(loc == npos) {
         throw std::logic_error("No location available to insert item");
     }
-    if (kequal_(p.first, table_[loc]->item.first)) {
-        table_[loc]->item.second = p.second;
-    } else {
+    if (table_[loc] == nullptr) {
         table_[loc] = new HashItem(p);
         numItems_++;
+    } else {
+        table_[loc]->item.second = p.second;
     }
 }
 
